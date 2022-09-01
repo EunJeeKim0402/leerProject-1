@@ -1,15 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="java.util.ArrayList, com.leer.member.model.vo.Member, com.leer.common.model.vo.PageInfo"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <% 
-	PageInfo pi = (PageInfo)request.getAttribute("pi");
-	ArrayList<Member> list = (ArrayList<Member>)request.getAttribute("list");
+	//PageInfo pi = (PageInfo)request.getAttribute("pi");
+	//ArrayList<Member> list = (ArrayList<Member>)request.getAttribute("list");
 		
-	int currentPage = pi.getCurrentPage();
-	int startPage = pi.getStartPage();
-	int endPage = pi.getEndPage();
-	int maxPage = pi.getMaxPage();
-  %>    
+	//int currentPage = pi.getCurrentPage();
+	//int startPage = pi.getStartPage();
+	//int endPage = pi.getEndPage();
+	//int maxPage = pi.getMaxPage();
+%>    
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,8 +26,8 @@
 </style>
 </head>
 <body>
-
-	<%@ include file="../../common/adminMenubar.jsp" %>
+	
+	<jsp:include page="../../common/adminMenubar.jsp"/>
 	
             <!-- ============================================================== -->
              <div class="page-breadcrumb">
@@ -92,7 +93,7 @@
                                 <script>
 									function changeList(val, page){
 										$.ajax({
-											url:"<%=request.getContextPath()%>/AjaxAdMemSelec.do",
+											url:"AjaxAdMemSelec.do",
 											data:{align:val
 												 ,cpage:page},
 											success:function(list){
@@ -101,7 +102,7 @@
 												let value = "";
 												for(let i=0; i<list.length; i++){
 													value+=
-													'<tr onclick="location.href="' + '<%=request.getContextPath()%>/adMemDetail.do?no=' + list[i].memNo + '">' +                  
+													'<tr onclick="location.href="' + 'adMemDetail.do?no=' + list[i].memNo + '">' +                  
 														'<th>' +
 															'<label class="customcheckbox">' +
 																'<span class="checkmark"></span>' +
@@ -130,24 +131,33 @@
 								</script>
 						<!----------------- 스크립트 ---------------//-->		
                                 <tbody class="custom">
-                                	<% for(Member m : list) { %>
-	                                    <tr onclick="location.href='<%=request.getContextPath()%>/adMemDetail.do?no=<%=m.getMemNo()%>';">
-	                                        <th>
-	                                            <label class="customcheckbox">
-	                                                <span class="checkmark"></span>
-	                                            </label>
-	                                        </th>
-	                                        <td><%=m.getMemNo()%></td>
-	                                        <td><%=m.getMemId()%></td>
-	                                        <td><%=m.getMemName()%></td>
-	                                        <td><%=m.getEmail()%></td>
-	                                        <td><%=m.getPhone()%></td>
-	                                        <td><%=m.getAddress()%></td>
-	                                        <td><%=m.getNickname()%></td>
-	                                        <td><%=m.getEnrollDate()%></td>
-	                                        <td><%=m.getPoint()%></td>
-	                                    </tr>
-                                    <% } %>
+                                	<c:choose>
+                                		<c:when test="${ empty list }">
+                                			<tr>
+                                				<td colspan="9">조회된 게시글이 없습니다.</td>
+                                			</tr>
+                                		</c:when>
+                                		<c:otherwise>
+                                			<c:forEach var="m" items="${ list }">
+			                                    <tr onclick="location.href='adMemDetail.do?no='${ m.memNo }';">
+			                                        <th>
+			                                            <label class="customcheckbox">
+			                                                <span class="checkmark"></span>
+			                                            </label>
+			                                        </th>
+			                                        <td>${ m.memNo }</td>
+			                                        <td>${ m.memId }</td>
+			                                        <td>${ m.memName }</td>
+			                                        <td>${ m.email }</td>
+			                                        <td>${ m.phone }</td>
+			                                        <td>${ m.address }</td>
+			                                        <td>${ m.nickname }</td>
+			                                        <td>${ m.enrollDate }</td>
+			                                        <td>${ m.point }</td>
+			                                    </tr>
+                                    		</c:forEach>
+                                    	</c:otherwise>
+                                    </c:choose>
                                 </tbody>
                                 <tfoot>
                                     <tr align="center">

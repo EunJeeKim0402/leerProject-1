@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="memberMapper">
+
+	<resultMap id="memberResultSet" type="Member">
+		<result column="mem_no" property="memNo"/>
+		<result column="mem_id" property="memId"/>
+		<result column="mem_pwd" property="memPwd"/>
+		<result column="nickname" property="nickname"/>
+		<result column="mem_name" property="memName"/>
+		<result column="mem_birth" property="memBirth"/>
+		<result column="phone" property="phone"/>
+		<result column="email" property="email"/>
+		<result column="address" property="address"/>
+		<result column="category_no" property="categoryNo"/>
+		<result column="point" property="point"/>
+		<result column="mem_status" property="memStatus"/>
+		<result column="enroll_date" property="enrollDate"/>
+		<result column="admin" property="admin"/>
+		<result column="profile-link" property="profileLink"/>
+	</resultMap>
+
+	<!-- 멤버리스트조회페이지, 김은지 -->
+	<select id="selectMemberList" type="Member">
+	    SELECT *
+		  FROM (
+		       SELECT ROWNUM RNUM, A.*
+		         FROM (
+		               SELECT
+		                       MEM_NO
+		                     , MEM_ID
+		                     , MEM_NAME
+		                     , EMAIL
+		                     , PHONE
+		                     , ADDRESS
+		                     , NICKNAME
+		                     , ENROLL_DATE
+		                     , POINT
+		                  FROM MEMBER
+		                 WHERE ADMIN = 'N'
+		                   AND MEM_STATUS = 'N'
+		                 ORDER
+		                    BY MEM_NO DESC
+		              ) A
+		       )
+		 WHERE RNUM BETWEEN ? AND ?
+	</select>
+	
+	<!-- 멤버리스트조회 - 가나다순, 김은지 -->
+	<select id="selectMemberListGND" type="Member">
+	    SELECT *
+		  FROM (
+		       SELECT ROWNUM RNUM, A.*
+		         FROM (
+		               SELECT
+		                       MEM_NO
+		                     , MEM_ID
+		                     , MEM_NAME
+		                     , EMAIL
+		                     , PHONE
+		                     , ADDRESS
+		                     , NICKNAME
+		                     , ENROLL_DATE
+		                     , POINT
+		                  FROM MEMBER
+		                 WHERE ADMIN = 'N'
+		                 ORDER
+		                    BY MEM_NAME
+		              ) A
+		       )
+		 WHERE RNUM BETWEEN ? AND ?
+	</select>
+	
+	<!-- 멤버리스트 상세조회페이지, 김은지 -->
+	<entry key="memberDatailList">
+		SELECT
+		       MEM_NO
+		     , MEM_ID
+		     , MEM_NAME
+		     , NICKNAME
+		     , ADDRESS
+		     , PHONE
+		     , ENROLL_DATE
+		     , POINT
+		  FROM MEMBER
+		 WHERE MEM_NO = ?
+	</entry>
+	
+	<!-- 멤버리스트 페이징처리, 김은지 -->
+	<entry key="selectMemberListCount">
+		SELECT COUNT(*) AS "COUNT"
+		  FROM MEMBER
+		 WHERE ADMIN = 'N'
+	</entry>
+	
+	<!-- 회원정보변경페이지조회, 김은지 -->
+	<entry key="updateMemberForm">
+		SELECT
+		       MEM_NO
+		     , MEM_ID
+		     , MEM_NAME
+		   	 , NICKNAME
+		     , ADDRESS
+		     , PHONE
+		     , ENROLL_DATE
+		     , POINT
+		  FROM MEMBER
+		 WHERE MEM_NO = ?
+	</entry>
+	
+	<!-- 회원정보변경, 김은지 
+	enroll_date 2022-08-01형식으로 적어야됨-->
+	<entry key="updateMember">
+		UPDATE MEMBER
+		   SET MEM_NAME = ?
+		   	 , NICKNAME = ?
+		     , ADDRESS = ?
+		     , PHONE = ?
+		 WHERE MEM_Id = ?
+	</entry>
+	
+	<!-- 회원삭제, 김은지 -->
+	<entry key="deleteMember">
+		UPDATE MEMBER
+		   SET MEM_STATUS = 'Y'
+		 WHERE MEM_NO = ?
+	</entry>
+	
+	<!-- 장기구독자리스트조회, 김은지 -->
+	<entry key="selectLongMemberList">
+		SELECT *
+		  FROM (
+		       SELECT ROWNUM RNUM, A.*
+		         FROM (     
+                    SELECT
+                           O.OR_NO
+                         , O.MEM_NO
+                         , S.START_DATE
+                         , S.END_DATE
+                         , M.MEM_ID
+                         , M.MEM_NAME
+                         , M.EMAIL
+                         , M.PHONE
+                         , M.ADDRESS
+                         , M.POINT
+                      FROM OR_PRODUCT OP
+                      JOIN "ORDER" O ON (OP.OR_NO = O.OR_NO)
+                      LEFT JOIN SUBSCRIBE S ON(OP.OR_NO = S.OR_NO)
+                      JOIN MEMBER M ON(O.MEM_NO = M.MEM_NO)
+                     WHERE OR_CYCLE != 1
+                     ORDER
+		  				BY OR_NO DESC
+                      ) A
+		       )
+		 WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<!-- 장기구독자리스트 페이징처리, 김은지 -->
+	<entry key="selectLongMemberListCount">
+	    SELECT COUNT(*)
+		  FROM OR_PRODUCT
+		 WHERE OR_CYCLE != 1
+	</entry>
+	
+	<!-- 장기구독자상세조회, 김은지 -->
+	<entry key="memberLongDetailList">
+		SELECT
+		       O.OR_NO
+		     , O.OR_PRICE
+		     , P.P_NAME
+		     , P.P_CODE
+		     , P.PUBLISH_MONTH  
+		     , OP.OR_CYCLE    
+		     , M.MEM_NO
+		     , M.MEM_ID
+		     , M.MEM_NAME
+		     , M.POINT     
+		     , P.IMAGE_URL1
+		  FROM "ORDER" O
+		  JOIN OR_PRODUCT OP ON(O.OR_NO = OP.OR_NO)
+		  JOIN PRODUCT P ON(OP.P_CODE = P.P_CODE)
+		  JOIN MEMBER M ON(O.MEM_NO = M.MEM_NO)
+		 WHERE OR_CYCLE != 1
+		   AND O.OR_NO = ?
+	</entry>
+	
+</mapper>	
+
+
+
+
+
+
+
+
+

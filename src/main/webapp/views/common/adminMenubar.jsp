@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>      
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,7 +27,7 @@
 <![endif]-->
 </head>
 <body>
-	<div class="preloader">
+	<div class="preloader">	
         <div class="lds-ripple">
             <div class="lds-pos"></div>
             <div class="lds-pos"></div>
@@ -55,7 +56,7 @@
                         </b>
                         <!--End Logo icon -->
 
-                        <!-- ============================================================== -->
+                        <!-- =========================================================	===== -->
                         <!-- leer로고 -->
                         <!-- ============================================================== -->
                         <span class="logo-text">
